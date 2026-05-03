@@ -1,6 +1,3 @@
-import torch
-import importlib
-
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
@@ -35,11 +32,15 @@ def show_result(dataset, model, index=0):
     ).squeeze()
     heatmap = (heatmap - heatmap.min()) / (heatmap.max() - heatmap.min() + 1e-8)
     heatmap_np = heatmap.numpy()
-    label_name = dataset.get_classes()[label]
+    label_name = dataset.get_label_name(label)
+    image_path = dataset.get_path(index) if hasattr(dataset, "get_path") else None
 
     fig, axes = plt.subplots(1, 3, figsize=(12, 4))
     axes[0].imshow(image)
-    axes[0].set_title(f"image: {label_name}")
+    title = f"image: {label_name}"
+    if image_path is not None:
+        title += f"\n{image_path.name}"
+    axes[0].set_title(title)
     axes[0].axis("off")
 
     axes[1].imshow(heatmap_np, cmap="jet")
